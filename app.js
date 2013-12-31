@@ -3,7 +3,7 @@ Ext.application({
 	name: 'Bejeweled',
 
 	appFolder: 'app',
-
+	stores: ['Scores', 'Gems'],
 	controllers: [ 'Games', 'Scores' ],
 
 	launch: function() {

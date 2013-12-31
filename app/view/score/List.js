@@ -5,6 +5,7 @@ Ext.define('Bejeweled.view.score.List', {
 
 	title: 'Leadership Board',
 	store: 'Scores',
+	maxWidth: 300,
 
 	initComponent: function() {
 	

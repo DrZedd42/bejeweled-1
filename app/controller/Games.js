@@ -1,7 +1,7 @@
 Ext.define('Bejeweled.controller.Games', {
 	extend: 'Ext.app.Controller',
 
-	views: ['board.Board'],
+	views: ['board.Gameboard', 'board.Boardgrid'],
 
 	init: function() {
 		this.control({
