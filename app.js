@@ -4,14 +4,15 @@ Ext.application({
 
 	appFolder: 'app',
 
+	controllers: [ 'Games', 'Scores' ],
+
 	launch: function() {
 		Ext.create('Ext.container.Viewport', {
 			layout: 'fit',
 			items: [
 				{
-					title: 'Bejeweled',
-					html : 'Hello! Welcome to Ext JS.'
-				}
+					xtype: 'gameboard'
+				} 
 			]
 		});
 	}
