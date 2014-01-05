@@ -1,5 +1,5 @@
 Ext.define('Bejeweled.store.Selected', {
 	extend: 'Ext.data.Store',
-	fields: ['color', 'row', 'column'],
+	model: 'Bejeweled.model.Selected',
 	autoLoad: false
 });
