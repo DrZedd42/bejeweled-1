@@ -3,6 +3,7 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 	alias: 'widget.boardgrid',
 	renderTo: Ext.getBody(),
 
+	selType: 'cellmodel',
 	width: 800,
 	height: 800,
 	title: 'Game Board', 
@@ -10,52 +11,52 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 
 	columns: [
 		{
+			text: 'Color 0',
+			sortable: false,
+			dataIndex: 'color0',
+			width: 50
+		},
+		{
 			text: 'Color 1',
 			sortable: false,
 			dataIndex: 'color1',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 2',
 			sortable: false,
 			dataIndex: 'color2',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 3',
 			sortable: false,
 			dataIndex: 'color3',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 4',
 			sortable: false,
 			dataIndex: 'color4',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 5',
 			sortable: false,
 			dataIndex: 'color5',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 6',
 			sortable: false,
 			dataIndex: 'color6',
-			width: 100
+			width: 50
 		},
 		{
 			text: 'Color 7',
 			sortable: false,
 			dataIndex: 'color7',
-			width: 100
-		},
-		{
-			text: 'Color 8',
-			sortable: false,
-			dataIndex: 'color8',
-			width: 100
+			width: 50
 		}
 	],
 
