@@ -79,12 +79,13 @@ Ext.define('Bejeweled.controller.Games', {
 						this.updateScore(tileScore);
 						this.removeCell(grid, i, x1);		
 					}
-					grid.getStore().commitChanges();
 				}
 			}
 			if (x1 > 0) {
+				// check that tile 2 wasn't removed 
 				console.log("Check color to the left of second tile: " + color2 + " in row " + y1);
 				var matchLeftSecondTile = this.checkColorLeft(grid, x1, y1, color2);
+				// check that tile 1 wasn't removed
 				console.log("Check color to the left of first tile: " + color1 + " in row " + y2);
 				var matchLeftFirstTile = this.checkColorLeft(grid, x1, y2, color1);
 			}
@@ -93,11 +94,14 @@ Ext.define('Bejeweled.controller.Games', {
 			var nColumns = fields.length - 1;
 			
 			if (x1 < nColumns - 1) {
+				// check that tile 2 wasn't removed
 				console.log("Check color to the right of second tile: " + color2 + " in row " + y1);
 				var matchRightSecondTile = this.checkColorRight(grid, x1, y1, color2);
+				// check that tile 1 wasn't removed
 				console.log("Check color to the right of first tile: " + color1 + " in row " + y2);
 				var matchRightFirstTile = this.checkColorRight(grid, x1, y2, color1);
 			}
+			grid.getStore().commitChanges();
 		}
 		else if (x1 == x2 && y1 == y2 + 1) {
 			console.log("Swap first tile up");
