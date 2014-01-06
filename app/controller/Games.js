@@ -2,7 +2,7 @@ Ext.define('Bejeweled.controller.Games', {
 	extend: 'Ext.app.Controller',
 
 	views: ['board.Gameboard', 'board.Boardgrid'],
-	stores: ['Selected'],
+	stores: ['Selected', 'Matched'],
 
 	init: function() {
 		this.control({
@@ -36,14 +36,14 @@ Ext.define('Bejeweled.controller.Games', {
 		}
 		if (store && count == 1) {
 			console.log("Attempt to swap items");
-			this.swapTiles(grid, tileColor, row, column);
+			this.onSelect(grid, tileColor, row, column);
 			store.removeAt(0);
 			store.sync();
 			console.log(store.data.getCount());
 		}	
 	},
 
-	swapTiles: function(grid, color2, y2, x2) {
+	onSelect: function(grid, color2, y2, x2) {
 		var store = Ext.data.StoreManager.get("Selected");
 		var previous = store.getAt(0);
 		console.log("First tile: " + previous.get('color') + " row: " + previous.get('row') + " column: " + previous.get('column'));
@@ -65,7 +65,8 @@ Ext.define('Bejeweled.controller.Games', {
 				var matchAbove = this.checkColorAbove(grid, x1, y1, color2);
 				console.log("Match above: " + matchAbove);
 				if (matchAbove >= 3) {
-					console.log("TODO: put matched tiles into store, update score and remove tiles from grid");
+					console.log("TODO: Put matched tiles into store, update score and remove tiles from grid");
+					
 				}
 			}
 			if (y2 < grid.getStore().getCount()) {
@@ -73,7 +74,26 @@ Ext.define('Bejeweled.controller.Games', {
 				var matchBelow = this.checkColorBelow(grid, x1, y2, color1);
 				console.log("Match below: " + matchBelow);
 				if (matchBelow >= 3) {
-					console.log("TODO: put matched tiles into store, update score and remove tiles from grid");
+					console.log("Update score and remove tiles from grid");
+					this.swapTiles(grid, x1, y1, color1, x2, y2, color2);
+					
+					var scoreGrid = Ext.getCmp("scorelist");
+					
+					for (var i = y2; i < y2 + matchBelow; i++) {
+						// add 10 points for each tile
+						var score = scoreGrid.dockedItems.items[2].items.items[1];
+						score.setText((parseInt(score.text) + 10).toString());
+
+						console.log(scoreGrid.dockedItems.items[2].items.items[1]);
+						
+						var columnToRemove = 'color'+(x1).toString();
+						var colorToRemove = grid.getStore().getAt(i).data[columnToRemove];
+						console.log("Tile to remove: y: " + i + " x: " + x1 + " color: " + colorToRemove);
+						var record = grid.getStore().getAt(i);
+						record.set(columnToRemove, "");
+					}
+					grid.getStore().commitChanges();
+
 				}
 			}
 			if (x1 > 0) {
@@ -90,7 +110,7 @@ Ext.define('Bejeweled.controller.Games', {
 				console.log("Check color to the right of second tile: " + color2 + " in row " + y1);
 				var matchRightSecondTile = this.checkColorRight(grid, x1, y1, color2);
 				console.log("Check color to the right of first tile: " + color1 + " in row " + y2);
-				var matchRightFirstTile = this.checkColorLeft(grid, x1, y2, color1);
+				var matchRightFirstTile = this.checkColorRight(grid, x1, y2, color1);
 			}
 		}
 		else if (x1 == x2 && y1 == y2 + 1) {
@@ -145,6 +165,19 @@ Ext.define('Bejeweled.controller.Games', {
 
 	checkColorRight: function(grid, x, y, color) {
 		console.log("TODO");
+	},
+
+	swapTiles: function(grid, x1, y1, color1, x2, y2, color2) {
+		var column1 = 'color' + (x1).toString();
+		var column2 = 'color' + (x2).toString();
+		var record1 = grid.getStore().getAt(y1);
+		var record2 = grid.getStore().getAt(y2);
+
+		console.log("record 1 : " + record1 + " record 2 : " + record2);
+		console.log("column 1 : " + column1 + " column 2 : " + column2);
+		record1.set(column1, color2);
+		record2.set(column2, color1);
+		grid.getStore().commitChanges();
 	}
 
 });

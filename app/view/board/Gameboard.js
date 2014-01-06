@@ -12,6 +12,7 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 			xtype: 'boardgrid',
 			columnWidth: 0.8
 		}
+		
 	],
 	
 	initComponent: function() {
