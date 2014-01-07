@@ -43,68 +43,84 @@ Ext.define('Bejeweled.controller.Games', {
 		}	
 	},
 
-	onSelect: function(grid, color2, y2, x2) {
+	onSelect: function(grid, color2, row2, column2) {
 		var store = Ext.data.StoreManager.get("Selected");
 		var previous = store.getAt(0);
 		console.log("First tile: " + previous.get('color') + " row: " + previous.get('row') + " column: " + previous.get('column'));
-		console.log("Second tile: " + color2 + " row: " + y2 + " column: " + x2);
+		console.log("Second tile: " + color2 + " row: " + row2 + " column: " + column2);
 		// check whether the move is valid
-		var y1 = previous.get('row');
-		var x1 = previous.get('column');
+		var row1 = previous.get('row');
+		var column1 = previous.get('column');
 		var color1 = previous.get('color');
 
 		if (color1 === color2) {
 			console.log("Don't swap - same color");
 			return;
 		}
+		var tileScore = 10; // add 10 points for each tile
+		var matchAbove = 0;
+		var matchBelow = 0;
+		var swapped = false;
 
-		if (x1 == x2 && y1 == y2 - 1) {
-			console.log("Swap first tile down");
-			var tileScore = 10; // add 10 points for each tile
-			if (y1 > 0) {
-				var matchAbove = this.checkColorAbove(grid, x1, y1, color2);
-				if (matchAbove >= 3) {
-					this.swapTiles(grid, x1, y1, color1, x2, y2, color2);
-					for (var i = y1; i < y1 - matchAbove; i--) {
-						this.updateScore(tileScore);
-						this.removeCell(grid, i, x1);
-					}
+		if (column1 == column2 && row1 == row2 - 1) {
+			console.log("try to swap first tile down");
+			matchAbove = this.checkColorAbove(grid, column1, row1, color2);
+			console.log("Match above = " + matchAbove);
+			if (matchAbove >= 3) {
+				if (!swapped) {
+					swapped = this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
+				}
+				for (var i = row1; i > row1 - matchAbove; i--) {
+					this.updateScore(tileScore);
+					this.removeCell(grid, i, column1);
+				}
+				// pull the column down and add new tiles from the top
+				console.log("pull tiles down");
+				this.pullTiles(grid, row1, column1, matchAbove);
+			}
+			matchBelow = this.checkColorBelow(grid, column1, row2, color1);
+			console.log("Match below = " + matchBelow);	
+			if (matchBelow >= 3) {	
+				if (!swapped) {
+				swapped = this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
+				}	
+				for (var i = row2; i < row2 + matchBelow; i++) {
+					this.updateScore(tileScore);
+					this.removeCell(grid, i, column1);		
 				}
 			}
-			if (y2 < grid.getStore().getCount()) {
-				var matchBelow = this.checkColorBelow(grid, x1, y2, color1);
-				if (matchBelow >= 3) {
-					this.swapTiles(grid, x1, y1, color1, x2, y2, color2);
-					for (var i = y2; i < y2 + matchBelow; i++) {
-						this.updateScore(tileScore);
-						this.removeCell(grid, i, x1);		
-					}
-				}
-			}
-			if (x1 > 0) {
-				// check that tile 2 wasn't removed 
-				console.log("Check color to the left of second tile: " + color2 + " in row " + y1);
-				var matchLeftSecondTile = this.checkColorLeft(grid, x1, y1, color2);
-				// check that tile 1 wasn't removed
-				console.log("Check color to the left of first tile: " + color1 + " in row " + y2);
-				var matchLeftFirstTile = this.checkColorLeft(grid, x1, y2, color1);
-			}
-
+			grid.getStore().commitChanges();
 			var fields = grid.getStore().getAt(0).fields.items;
 			var nColumns = fields.length - 1;
 			
-			if (x1 < nColumns - 1) {
-				// check that tile 2 wasn't removed
-				console.log("Check color to the right of second tile: " + color2 + " in row " + y1);
-				var matchRightSecondTile = this.checkColorRight(grid, x1, y1, color2);
-				// check that tile 1 wasn't removed
-				console.log("Check color to the right of first tile: " + color1 + " in row " + y2);
-				var matchRightFirstTile = this.checkColorRight(grid, x1, y2, color1);
-			}
-			grid.getStore().commitChanges();
 		}
-		else if (x1 == x2 && y1 == y2 + 1) {
-			console.log("Swap first tile up");
+		else if (column1 == column2 && row1 == row2 + 1) {
+			console.log("try to swap first tile up");
+			matchAbove = this.checkColorAbove(grid, column1, row2, color1);
+			console.log("Match above = " + matchAbove);
+			if (matchAbove >= 3) {
+				if (!swapped) {
+					swapped = this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
+				}
+				for (var i = row2; i > row2 - matchAbove; i--) {
+					this.updateScore(tileScore);
+					this.removeCell(grid, i, column1);
+				}
+				grid.getStore().commitChanges();
+			}
+			matchBelow = this.checkColorBelow(grid, column1, row1, color2);
+			console.log("Match below = " + matchBelow);	
+			if (matchBelow >= 3) {
+				if (!swapped) {
+				swapped = this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
+				}	
+				for (var i = row1; i < row1 + matchBelow; i++) {
+					this.updateScore(tileScore);
+					this.removeCell(grid, i, column1);		
+				}
+				grid.getStore().commitChanges();
+			}
+			
 		}
 		else if (y1 == y2 && x1 == x2 + 1) {
 			console.log("swap second tile right");
@@ -119,15 +135,17 @@ Ext.define('Bejeweled.controller.Games', {
 
 	checkColorAbove: function(grid, x, y, color) {
 		var matchedCount = 1;
-		for (var i = y-1; i >= 0; i--) { 
-			var cellAbove = 'color'+(x).toString();
-			var colorAbove = grid.getStore().getAt(i).data[cellAbove];
-			console.log("y: " + i + " x: " + x + " color: " + colorAbove);
-			if (colorAbove === color){
-				matchedCount++;
-			}
-			else {
-				break;
+		if (y > 0) {
+			for (var i = y-1; i >= 0; i--) { 
+				var cellAbove = 'color'+(x).toString();
+				var colorAbove = grid.getStore().getAt(i).data[cellAbove];
+				console.log("y: " + i + " x: " + x + " color: " + colorAbove);
+				if (colorAbove === color){
+					matchedCount++;
+				}
+				else {
+					break;
+				}
 			}
 		}
 		return matchedCount;
@@ -135,26 +153,60 @@ Ext.define('Bejeweled.controller.Games', {
 
 	checkColorBelow: function(grid, x, y, color) {
 		var matchedCount = 1;
-		for (var i = y+1; i < grid.getStore().getCount(); i++) {
-			var cellBelow = 'color' + (x).toString();
-			var colorBelow = grid.getStore().getAt(i).data[cellBelow];
-			console.log("y: " + i + " x: " + x + " color: " + colorBelow);
-			if (colorBelow === color) {
-				matchedCount++;
-			}
-			else {
-				break;
+		if (y < grid.getStore().getCount()-1) {
+			for (var i = y+1; i < grid.getStore().getCount(); i++) {
+				var cellBelow = 'color' + (x).toString();
+				var colorBelow = grid.getStore().getAt(i).data[cellBelow];
+				console.log("y: " + i + " x: " + x + " color: " + colorBelow);
+				if (colorBelow === color) {
+					matchedCount++;
+				}
+				else {
+					break;
+				}
 			}
 		}
 		return matchedCount; 
 	},
 
 	checkColorLeft: function(grid, x, y, color) {
-		console.log("TODO");
+		var matchedCount = 1;
+		if (x > 0) {
+			// check to the left of x
+			for (var i = x-1; i >= 0; i--) {
+				var cellToLeft = 'color' + i.toString();
+				var colorToLeft = grid.getStore().getAt(y).data[cellToLeft];
+				console.log("y: " + y + " x: " + i + " color: " + colorToLeft);
+				if (colorToLeft === color) {
+					matchedCount++;
+				}
+				else {
+					break;
+				}
+			}
+		}
+		return matchedCount;
 	},
-
+	
 	checkColorRight: function(grid, x, y, color) {
-		console.log("TODO");
+		var matchedCount = 1;
+		var nColumns = grid.getStore().getAt(0).fields.items.length - 1;
+		
+		if (x < nColumns-1) {
+			// check to the right of x
+			for (var i = x+1; i < nColumns; i++) {
+				var cellToRight = 'color' + i.toString();
+				var colorToRight = grid.getStore().getAt(y).data[cellToRight];
+				console.log("y: " + y + " x: " + i + " color: " + colorToRight);
+				if (colorToRight === color) {
+					matchedCount++;
+				}
+				else {
+					break;
+				}
+			}
+		}
+		return matchedCount;
 	},
 
 	swapTiles: function(grid, x1, y1, color1, x2, y2, color2) {
@@ -168,9 +220,11 @@ Ext.define('Bejeweled.controller.Games', {
 		record1.set(column1, color2);
 		record2.set(column2, color1);
 		grid.getStore().commitChanges();
+		return true;
 	},
 
 	updateScore: function(scoreToAdd) {
+		//console.log("+10");
 		var scoreGrid = Ext.getCmp("scorelist");
 		var score = scoreGrid.dockedItems.items[2].items.items[1];
 		score.setText((parseInt(score.text) + scoreToAdd).toString());
@@ -182,6 +236,37 @@ Ext.define('Bejeweled.controller.Games', {
 		console.log("Tile to remove: y: " + row + " x: " + column + " color: " + colorToRemove);
 		var record = grid.getStore().getAt(row);
 		record.set(columnToRemove, "");
+	},
+
+	pullTiles: function(grid, row, column, matchAbove) {
+		var nColors = 5; // red=0 blue=1 green=2 orange=3 white=4
+		var columnToPull = 'color'+(column);
+		var topIndex = row - matchAbove + 1; // number of tiles to pull down
+		console.log("row = " + row + " column = " + column + " matchAbove = " + matchAbove);
+		if (topIndex == 0) { 
+			for (var i=0; i < matchAbove; i++) {
+				// add random colored tiles
+				var r = Math.floor(Math.random() * nColors);
+				console.log("r = " + r);
+			}
+		}
+		else {
+			// pull existing tiles from the top down
+			console.log("topIndex = " + topIndex);
+			for (var i = 0; i < topIndex; i++) {
+				var recordToSet = grid.getStore().getAt(row-i);
+				var recordToClear = grid.getStore().getAt(topIndex-i-1);
+				var colorToPull = grid.getStore().getAt(topIndex-i-1).data[columnToPull];
+				console.log("color = " + colorToPull);
+				recordToSet.set(columnToPull, colorToPull);
+				recordToClear.set(columnToPull, "");
+			}
+			// add random colored tiles
+			for (var i=0; i < matchAbove; i++) {	
+				var r = Math.floor(Math.random() * nColors);
+				console.log("r = " + r);
+			}
+		}
 	}
 
 });
