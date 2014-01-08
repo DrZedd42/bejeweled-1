@@ -2,7 +2,7 @@ Ext.define('Bejeweled.controller.Games', {
 	extend: 'Ext.app.Controller',
 
 	views: ['board.Gameboard', 'board.Boardgrid'],
-	stores: ['Selected'],
+	stores: ['Selected', 'Tiles'],
 
 	init: function() {
 		this.control({
@@ -74,7 +74,6 @@ Ext.define('Bejeweled.controller.Games', {
 					this.updateScore(tileScore);
 					this.removeCell(grid, i, column1);
 				}
-				// pull the column down and add new tiles from the top
 				console.log("pull tiles down");
 				this.pullTiles(grid, row1, column1, matchAbove);
 			}
@@ -88,6 +87,10 @@ Ext.define('Bejeweled.controller.Games', {
 					this.updateScore(tileScore);
 					this.removeCell(grid, i, column1);		
 				}
+				console.log("pull tiles down");
+				console.log("row2 = " + row2 + " matchBelow = " + matchBelow);
+				var bottomRow = row2 + matchBelow - 1;
+				this.pullTiles(grid, bottomRow, column1, matchBelow);
 			}
 			grid.getStore().commitChanges();
 			var fields = grid.getStore().getAt(0).fields.items;
@@ -106,8 +109,11 @@ Ext.define('Bejeweled.controller.Games', {
 					this.updateScore(tileScore);
 					this.removeCell(grid, i, column1);
 				}
-				grid.getStore().commitChanges();
+				
+				console.log("pull tiles down");
+				this.pullTiles(grid, row2, column1, matchAbove);
 			}
+			
 			matchBelow = this.checkColorBelow(grid, column1, row1, color2);
 			console.log("Match below = " + matchBelow);	
 			if (matchBelow >= 3) {
@@ -118,19 +124,23 @@ Ext.define('Bejeweled.controller.Games', {
 					this.updateScore(tileScore);
 					this.removeCell(grid, i, column1);		
 				}
-				grid.getStore().commitChanges();
+				console.log("pull tiles down");
+				var bottomRow = row1 + matchBelow - 1;
+				console.log("bottomRow = " + bottomRow);
+				this.pullTiles(grid, bottomRow, column1, matchBelow);
+				
 			}
-			
+			grid.getStore().commitChanges();
 		}
-		else if (y1 == y2 && x1 == x2 + 1) {
-			console.log("swap second tile right");
-		}
-		else if (y1 == y2 && x1 == x2 - 1) {
-			console.log("swap second tile left");
-		}
-		else {
-			console.log("Invalid move!");
-		}
+		//else if (y1 == y2 && x1 == x2 + 1) {
+			//console.log("swap second tile right");
+		//}
+		//else if (y1 == y2 && x1 == x2 - 1) {
+		//	console.log("swap second tile left");
+		//}
+		//else {
+		//	console.log("Invalid move!");
+		//}
 	},
 
 	checkColorAbove: function(grid, x, y, color) {
@@ -224,7 +234,6 @@ Ext.define('Bejeweled.controller.Games', {
 	},
 
 	updateScore: function(scoreToAdd) {
-		//console.log("+10");
 		var scoreGrid = Ext.getCmp("scorelist");
 		var score = scoreGrid.dockedItems.items[2].items.items[1];
 		score.setText((parseInt(score.text) + scoreToAdd).toString());
@@ -238,34 +247,44 @@ Ext.define('Bejeweled.controller.Games', {
 		record.set(columnToRemove, "");
 	},
 
-	pullTiles: function(grid, row, column, matchAbove) {
-		var nColors = 5; // red=0 blue=1 green=2 orange=3 white=4
+	pullTiles: function(grid, bottomRow, column, numberMatched) {	
 		var columnToPull = 'color'+(column);
-		var topIndex = row - matchAbove + 1; // number of tiles to pull down
-		console.log("row = " + row + " column = " + column + " matchAbove = " + matchAbove);
-		if (topIndex == 0) { 
-			for (var i=0; i < matchAbove; i++) {
-				// add random colored tiles
-				var r = Math.floor(Math.random() * nColors);
-				console.log("r = " + r);
-			}
-		}
-		else {
-			// pull existing tiles from the top down
+		var topIndex = bottomRow - numberMatched + 1; // top empty tile row index
+		console.log("row = " + bottomRow + " column = " + column + " numberMatched = " + numberMatched);
+		if (topIndex != 0) {  // pull existing tiles from the top down
 			console.log("topIndex = " + topIndex);
 			for (var i = 0; i < topIndex; i++) {
-				var recordToSet = grid.getStore().getAt(row-i);
+				var recordToSet = grid.getStore().getAt(bottomRow-i);
 				var recordToClear = grid.getStore().getAt(topIndex-i-1);
 				var colorToPull = grid.getStore().getAt(topIndex-i-1).data[columnToPull];
-				console.log("color = " + colorToPull);
+				console.log("color to pull = " + colorToPull);
 				recordToSet.set(columnToPull, colorToPull);
 				recordToClear.set(columnToPull, "");
 			}
-			// add random colored tiles
-			for (var i=0; i < matchAbove; i++) {	
+		}
+		// add random colored tiles
+		var lowestEmptyRow = bottomRow - topIndex;
+		console.log("lowestEmptyRow = " + lowestEmptyRow);
+		this.addTiles(grid, numberMatched, lowestEmptyRow, column);
+	},
+
+	addTiles: function(grid, numberOfTiles, row, column) {
+		// red=0 blue=1 green=2 orange=3 white=4
+		var tileStore = Ext.data.StoreManager.get("Tiles"); 
+		var nColors = tileStore.getCount(); 
+		var columnToPull = 'color'+(column);
+		for (var i=0; i < numberOfTiles; i++) {
+				// add random colored tiles
 				var r = Math.floor(Math.random() * nColors);
-				console.log("r = " + r);
-			}
+				if (r >= 0 && r < nColors) {
+					var color = tileStore.getAt(r).data.color;
+					console.log("r = " + r + " color = " + color);
+					var record = grid.getStore().getAt(row-i);
+					if (record) {
+						record.set(columnToPull, color);
+						this.checkColorBelow(grid, row-i, column, color);
+					}
+				}
 		}
 	}
 
