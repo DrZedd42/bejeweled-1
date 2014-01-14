@@ -4,10 +4,12 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 	renderTo: Ext.getBody(),
 
 	selType: 'cellmodel',
+	allowDeselect: true,
 	width: 800,
 	height: 800,
 	title: 'Game Board', 
 	store: 'Gems',
+	id: 'id-boardgrid',
 
 	columns: [
 		{
@@ -60,7 +62,13 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 		}
 	],
 
-	initComponent: function() {
-		this.callParent(arguments);
-	}
+	/*initComponent: function() {
+		this.editing = Ext.create('Ext.grid.plugin.CellEditing');
+		Ext.apply(this, {
+			plugins: [this.editing],
+			selModel: {
+				selType: 'cellmodel'
+			}
+		});
+	}*/
 });
