@@ -72,13 +72,13 @@ Ext.define('Bejeweled.controller.Games', {
 		if ((column1 === column2) && (row1 === row2 - 1)) {
 			return this.swapFirstTileDown(grid, tileScore, row1, column1, color1, row2, column2, color2);
 		}
-		else if ((column1 == column2) && (row1 == row2 + 1)) {
+		else if ((column1 === column2) && (row1 === row2 + 1)) {
 			return this.swapFirstTileUp(grid, tileScore, row1, column1, color1, row2, column2, color2);
 		}
-		else if ((row1 == row2) && (column1 == column2 + 1)) {
+		else if ((row1 === row2) && (column1 === column2 + 1)) {
 			return this.swapFirstTileLeft(grid, tileScore, row1, column1, color1, row2, column2, color2);
 		}
-		else if ((row1 == row2) && (column1 == column2 - 1)) {
+		else if ((row1 === row2) && (column1 === column2 - 1)) {
 			return this.swapFirstTileRight(grid, tileScore, row1, column1, color1, row2, column2, color2);
 		}			
 		else {
@@ -444,9 +444,8 @@ Ext.define('Bejeweled.controller.Games', {
 				
 			}
 		}
-		//console.log("After pulling existing tiles Affected count = " + store.getCount());
-		//console.log(store);
-		// add random colored tiles
+
+		// add new tiles
 		var lowestEmptyRow = bottomRow - topIndex;
 		this.addTiles(grid, numberMatched, lowestEmptyRow, column);
 	},
@@ -478,8 +477,6 @@ Ext.define('Bejeweled.controller.Games', {
 		}
 		grid.getStore().commitChanges();
 		grid.getStore().sync();
-		//console.log("Added " + numberOfTiles + " new tiles");
-		//console.log("After adding new tiles Affected count = " + store.getCount());
 	},
 
 	checkAffected: function(grid) {
@@ -488,35 +485,23 @@ Ext.define('Bejeweled.controller.Games', {
 		
 		// check every direction for each affected tile
 		if (store) {
-			//console.log("checkAffected. Count = " + store.getCount());
 			var tiles = store.data.items;
-
 			for (var i = 0; i < store.getCount(); i++) {
-				//console.log("i = " + i);
 				var tile = tiles[i].data;
-				//console.log("tile: row " + tile.row + " column " + tile.column + " color " + tile.color);
-				//console.log("checking color above");
 				var matchAbove = this.checkColorAbove(grid, tile.column, tile.row, tile.color);
-				//console.log("matchAbove = " + matchAbove);
-				//console.log("checking color below");
 				var matchBelow = this.checkColorBelow(grid, tile.column, tile.row, tile.color);
-				//console.log("checking the row");
 				var matchCellLeft = this.checkColorLeft(grid, tile.column, tile.row, tile.color);
 				var matchCellRight = this.checkColorRight(grid, tile.column, tile.row, tile.color);
 				var rowMatch = matchCellLeft + matchCellRight - 1;
 				var columnMatch = matchAbove + matchBelow - 1;
-				//console.log("rowMatch = " + rowMatch + " columnMatch = " + columnMatch);
-				if ((columnMatch >= 3) || (rowMatch >=3)) {
-					// remove all items from Affected store
+				
+				if ((columnMatch >= 3) || (rowMatch >= 3)) {
 					store.removeAll();
-					//console.log("Match! MatchRow = " + rowMatch + " matchColumn = " + columnMatch);
-					//console.log("After removing all records Affected count = " + store.getCount());
 							
 					if (columnMatch >= 3) {
 						var start = tile.row + matchBelow - 1;
 						var end = tile.row - matchAbove + 1;					
 						for (var k = start; k >= end; k--) {
-							console.log("bonus!");
 							this.updateScore(bonus);
 							this.removeCell(grid, k, tile.column);
 						}
@@ -535,19 +520,11 @@ Ext.define('Bejeweled.controller.Games', {
 					this.checkAffected(grid); 
 				}
 				else {
-					//console.log("remove affected cell");
-					//console.log("tile: row " + tile.row + " column " + tile.column + " color " + tile.color);
-					// remove the cell
 					store.removeAt(i);
 					i--;
-					//console.log("After removing affected cell count = " + store.getCount());
 				}
-				
-				
 			}
-			//console.log("No more affected cells. Try swapping two tiles.");
 			grid.getStore().commitChanges();
-			
 		}
 		else {
 			console.log("store is not defined");

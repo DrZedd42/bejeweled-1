@@ -5,7 +5,7 @@ Ext.define('Bejeweled.view.score.List', {
 	renderTo: Ext.getBody(),
 
 	title: 'Leadership Board',
-	store: 'Scores',
+	//store: 'Scores',
 	maxWidth: 200,
 	
 	dockedItems: [{
@@ -31,8 +31,8 @@ Ext.define('Bejeweled.view.score.List', {
 	initComponent: function() {
 	
 		this.columns = [
-			{ header: 'Name', dataIndex: 'name', flex: 1 },
-			{ header: 'Score', dataIndex: 'score', flex: 1 }
+			//{ header: 'Name', dataIndex: 'name', flex: 1 },
+			//{ header: 'Score', dataIndex: 'score', flex: 1 }
 		];
 
 		this.callParent(arguments);
