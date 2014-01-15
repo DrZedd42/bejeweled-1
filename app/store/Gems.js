@@ -12,6 +12,7 @@ Ext.define('Bejeweled.store.Gems', {
 		{ color0: 'blue', color1: 'red', color2: 'green', color3: 'orange', color4: 'green', color5: 'green', color6: 'blue', color7: 'red' },
 		{ color0: 'red', color1: 'green', color2: 'white', color3: 'white', color4: 'red', color5: 'orange', color6: 'white', color7: 'blue' }
 	],
+
 	autoLoad: true
 
 });
