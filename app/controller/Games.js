@@ -24,7 +24,7 @@ Ext.define('Bejeweled.controller.Games', {
 		var store = Ext.data.StoreManager.get("Selected");
 		var count = store.data.getCount();
 		var tileColor = record.get('color' + column);
-		console.log("tile selected: row " + row + " column " + column + " color " + tileColor);
+	
 		if (store && count == 0) {
 			store.add(new Bejeweled.model.Selected({
 				color: tileColor,
@@ -36,11 +36,31 @@ Ext.define('Bejeweled.controller.Games', {
 			var result = this.onSelect(grid, tileColor, row, column);
 			if (result) {
 				store.removeAll();
+				var affected = Ext.data.StoreManager.get("Affected");
+				if (affected) {
+					affected.removeAll();	
+					// check the whole board 
+					var items = grid.store.data.items;
+					for (var i = 0; i < items.length; i++) {
+						var tileRow = items[i].data;
+						for (var j = 0; j < grid.store.getCount(); j++) {
+							var cell = 'color'+(j).toString();
+							var color = grid.getStore().getAt(i).data[cell];
+							affected.add(new Bejeweled.model.Selected({
+								color: color,
+								row: i,
+								column: j	
+							}));
+							
+						}
+					}
+					this.checkAffected(grid);
+				}
 			}
 			//var boardGrid = Ext.getCmp('id-boardgrid');
 			//boardGrid.getView().deselectAll();
-			return;
-		}	
+		}
+		return;	
 	},
 
 	onSelect: function(grid, color2, row2, column2) {
@@ -53,7 +73,6 @@ Ext.define('Bejeweled.controller.Games', {
 		var color1 = previous.get('color');
 	
 		if (color1 === color2) {
-			//console.log("Don't swap - same color");
 			return false;
 		}
 		else {
@@ -96,8 +115,7 @@ Ext.define('Bejeweled.controller.Games', {
 		var matchRow2Left = this.checkColorLeft(grid, column1, row1, color2);
 		var matchRow2Right = this.checkColorRight(grid, column1, row1, color2);
 		var row2match = matchRow2Left + matchRow2Right - 1;
-		//console.log("matchAbove = " + matchAbove + ", matchBelow = " + matchBelow + ", row1match = " + row1match + ", row2match = " + row2match);
-
+		
 		if ((matchAbove >= 3) || (matchBelow >= 3) || (row1match >= 3) || (row2match >= 3)) {
 			this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
 		}
@@ -135,7 +153,6 @@ Ext.define('Bejeweled.controller.Games', {
 		else if (row2match >= 3) {
 			var start = column1 - matchRow2Left + 1;
 			var end = start + row2match - 1;
-			//console.log("start " + start + " end " + end);
 			for (var i = start; i <= end; i++) {
 				this.updateScore(tileScore);
 				this.removeCell(grid, row1, i);
@@ -156,7 +173,6 @@ Ext.define('Bejeweled.controller.Games', {
 		matchRow2Left = this.checkColorLeft(grid, column1, row2, color1);
 		matchRow2Right = this.checkColorRight(grid, column1, row2, color1);
 		var row2match = matchRow2Left + matchRow2Right - 1;
-		//console.log("matchAbove = " + matchAbove + ", matchBelow = " + matchBelow + ", row1match = " + row1match + ", row2match = " + row2match);
 
 		if ((matchAbove >= 3) || (matchBelow >= 3) || (row1match >= 3) || (row2match >= 3)) {
 			this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
@@ -213,7 +229,6 @@ Ext.define('Bejeweled.controller.Games', {
 		var matchCol2Above = this.checkColorAbove(grid, column2, row1, color1);
 		var matchCol2Below = this.checkColorBelow(grid, column2, row1, color1);
 		var matchColumn2 = matchCol2Above + matchCol2Below - 1;	
-		//console.log("matchRowLeft = " + matchRowLeft + ", matchRowRight = " + matchRowRight + ", matchColumn1 = " + matchColumn1 + ", matchColumn2 = " + matchColumn2);
 
 		if ((matchRowLeft >= 3) || (matchRowRight >= 3) || (matchColumn1 >= 3) || (matchColumn2 >= 3)) {
 			this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
@@ -273,7 +288,6 @@ Ext.define('Bejeweled.controller.Games', {
 		var matchCol2Above = this.checkColorAbove(grid, column2, row1, color1);
 		var matchCol2Below = this.checkColorBelow(grid, column2, row1, color1);
 		var matchColumn2 = matchCol2Above + matchCol2Below - 1;	
-		//console.log("matchRowLeft = " + matchRowLeft + ", matchRowRight = " + matchRowRight + ", matchColumn1 = " + matchColumn1 + ", matchColumn2 = " + matchColumn2);
 
 		if ((matchRowLeft >= 3) || (matchRowRight >= 3) || (matchColumn1 >= 3) || (matchColumn2 >= 3)) {
 			this.swapTiles(grid, column1, row1, color1, column2, row2, color2);
@@ -423,7 +437,6 @@ Ext.define('Bejeweled.controller.Games', {
 		var columnToPull = 'color'+(column);
 		var topIndex = bottomRow - numberMatched + 1; // top empty tile row index
 		var store = Ext.data.StoreManager.get("Affected");
-		//console.log("Before pulling tiles affected count = " + store.getCount());
 
 		// pull existing tiles from the top down
 		if (topIndex != 0) {
