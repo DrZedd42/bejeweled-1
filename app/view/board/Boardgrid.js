@@ -1,5 +1,3 @@
-
-
 Ext.define('Bejeweled.view.board.Boardgrid', {
 	extend: 'Ext.grid.Panel',
 	alias: 'widget.boardgrid',
@@ -7,22 +5,22 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 
 	selType: 'cellmodel',
 	allowDeselect: true,
-	width: 800,
-	height: 800,
-	title: 'Game Board', 
+	maxWidth: 400,
+	maxHeight: 400,
+	
 	store: 'Gems',
 	id: 'id-boardgrid',
 
 	columns: [
 		{
-			text: 'Color 0',
+			//text: 'Color 0',
 			sortable: false,
 			dataIndex: 'color0',
 			width: 50,
 			renderer: renderIcon
 		},			
 		{
-			text: 'Color 1',
+			//text: 'Color 1',
 			sortable: false,
 			dataIndex: 'color1',
 			width: 50,
@@ -30,42 +28,42 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 			
 		},
 		{
-			text: 'Color 2',
+			//text: 'Color 2',
 			sortable: false,
 			dataIndex: 'color2',
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			text: 'Color 3',
+			//text: 'Color 3',
 			sortable: false,
 			dataIndex: 'color3',
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			text: 'Color 4',
+			//text: 'Color 4',
 			sortable: false,
 			dataIndex: 'color4',
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			text: 'Color 5',
+			//text: 'Color 5',
 			sortable: false,
 			dataIndex: 'color5',
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			text: 'Color 6',
+			//text: 'Color 6',
 			sortable: false,
 			dataIndex: 'color6',
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			text: 'Color 7',
+			//text: 'Color 7',
 			sortable: false,
 			dataIndex: 'color7',
 			width: 50,
