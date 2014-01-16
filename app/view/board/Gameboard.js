@@ -25,7 +25,7 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 					border: false
      				},
 				{
-					html:'<p>Instructions: press PLAY to start the game. </p>',
+					html:'<div style="font-size: medium;">Press PLAY to start the game.</div>',
 					width: 500,
 					border: false,
 					id: 'instructions'
@@ -45,7 +45,7 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 						{
 							scope: this,
 							name: 'scoreField',
-							text: 'Score: ',
+							text: '<div style="color: gray;font-weight: bold; font-size: medium;">Score: </div>',
 							id: 'scorefield'
 						},
 						{
@@ -61,7 +61,8 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 						},
 						{
 							xtype: 'button',
-							text: 'PLAY',
+							border: true,
+							text: '<div style="color: white;font-weight: bold;font-size: large;">PLAY</div>',
 							width: 60,
 							id: 'playButton',
 							action: 'start'

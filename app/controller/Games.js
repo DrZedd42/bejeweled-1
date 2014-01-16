@@ -6,9 +6,7 @@ Ext.define('Bejeweled.controller.Games', {
 
 	init: function() {
 		this.control({
-			'viewport > panel': {
-				render: this.onPanelRendered
-			},
+			
 			'boardgrid': {
 				select: this.itemSelected
 				//deselect: this.deselectCell
@@ -19,12 +17,7 @@ Ext.define('Bejeweled.controller.Games', {
 		});
 	},
 
-	onPanelRendered: function() {
-		console.log('The game board panel was rendered');
-	},
-
 	startGame: function(button) {
-		console.log("clicked PLAY button");
 		// initialize the board
 		var grid = Ext.getCmp('id-boardgrid');
 		var tileStore = Ext.data.StoreManager.get("Tiles"); 
@@ -62,7 +55,7 @@ Ext.define('Bejeweled.controller.Games', {
 		grid.getStore().sync();
 
 		var instructions = Ext.getCmp("instructions");
-		instructions.update('<p>Instructions: match at least 3 tiles of the same color<p>');
+		instructions.update('<div style="font-size:medium;">Match at least 3 tiles of the same color by swapping two tiles.</div>');
 	},
 
 	itemSelected: function(grid, record, row, column) {
@@ -102,8 +95,6 @@ Ext.define('Bejeweled.controller.Games', {
 					this.checkAffected(grid);
 				}
 			}
-			//var boardGrid = Ext.getCmp('id-boardgrid');
-			//boardGrid.getView().deselectAll();
 		}
 		return;	
 	},
@@ -467,7 +458,9 @@ Ext.define('Bejeweled.controller.Games', {
 
 	updateScore: function(scoreToAdd) {
 		var score = Ext.getCmp("score");
-		score.setText((parseInt(score.text) + scoreToAdd).toString());
+               // score.update((parseInt(score.text) + scoreToAdd).toString());
+		score.update('<div style="font-size:medium;color:gray;">'+(parseInt(score.text) + scoreToAdd).toString()+'</div');
+		
 	},
 
 	removeCell: function(grid, row, column) {
@@ -539,7 +532,6 @@ Ext.define('Bejeweled.controller.Games', {
 
 	checkAffected: function() {
 		var grid = Ext.getCmp('id-boardgrid');
-		console.log("checkAffected");
 		var store = Ext.data.StoreManager.get("Affected");
 		var bonus = 15; // add 15 points for each extra matched tile
 				
@@ -593,7 +585,6 @@ Ext.define('Bejeweled.controller.Games', {
 	},
 
 	checkBoard: function() {
-		console.log("checkBoard");
 		var grid = Ext.getCmp('id-boardgrid');
 		var tiles = grid.store.data.items;
 		var affected = Ext.data.StoreManager.get("Affected");
