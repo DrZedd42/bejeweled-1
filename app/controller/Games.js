@@ -30,7 +30,8 @@ Ext.define('Bejeweled.controller.Games', {
 		var tileStore = Ext.data.StoreManager.get("Tiles"); 
 		var gemStore = grid.getStore();
 		var nColors = tileStore.getCount(); 
-	
+		var store = Ext.data.StoreManager.get("Affected");
+
 		for (var i = 0; i < gemStore.getCount(); i++) {
 			for (var j = 0; j < gemStore.getCount(); j++) {
 				var r = Math.floor(Math.random() * nColors);
@@ -40,10 +41,22 @@ Ext.define('Bejeweled.controller.Games', {
 					var record = grid.getStore().getAt(i);
 					if (record) {
 						record.set(columnToPull, color);
+						if (record) {
+							record.set(columnToPull, color);
+							if (store) {
+								store.add(new Bejeweled.model.Selected({
+									color: color,
+									row: i,
+									column: j	
+								}));
+							}
+						}
 					}
 				}
 			}
 		}
+		this.checkAffected(grid);
+		this.checkBoard(grid);
 		grid.getStore().commitChanges();
 		gemStore.commitChanges();
 		grid.getStore().sync();
@@ -111,6 +124,7 @@ Ext.define('Bejeweled.controller.Games', {
 			var result = this.attemptToSwap(grid, row1, column1, color1, row2, column2, color2);
 			if (result) {
 				this.checkAffected(grid);
+				this.checkBoard(grid);
 			}
 			return true;
 		}
@@ -526,7 +540,8 @@ Ext.define('Bejeweled.controller.Games', {
 	checkAffected: function(grid) {
 		var store = Ext.data.StoreManager.get("Affected");
 		var bonus = 15; // add 15 points for each extra matched tile
-		
+				
+
 		// check every direction for each affected tile
 		if (store) {
 			var tiles = store.data.items;
@@ -573,6 +588,16 @@ Ext.define('Bejeweled.controller.Games', {
 		else {
 			console.log("store is not defined");
 		}	
+	},
+
+	checkBoard: function(grid) {
+		var tiles = grid.store.data.items;
+		console.log(tiles);
+		for (var i = 0; i < grid.store.getCount(); i++) {
+			for (var j=0; j < grid.store.getCount(); j++) {
+				
+			}
+		}
 	},
 
 	deselectCell: function() {
