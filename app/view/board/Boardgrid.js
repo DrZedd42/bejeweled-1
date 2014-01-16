@@ -10,66 +10,60 @@ Ext.define('Bejeweled.view.board.Boardgrid', {
 	
 	store: 'Gems',
 	id: 'id-boardgrid',
-
+	hideHeaders: true,
 	columns: [
 		{
-			//text: 'Color 0',
-			sortable: false,
 			dataIndex: 'color0',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},			
 		{
-			//text: 'Color 1',
-			sortable: false,
 			dataIndex: 'color1',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 			
 		},
 		{
-			//text: 'Color 2',
-			sortable: false,
 			dataIndex: 'color2',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			//text: 'Color 3',
-			sortable: false,
 			dataIndex: 'color3',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			//text: 'Color 4',
-			sortable: false,
 			dataIndex: 'color4',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			//text: 'Color 5',
-			sortable: false,
 			dataIndex: 'color5',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			//text: 'Color 6',
-			sortable: false,
 			dataIndex: 'color6',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		},
 		{
-			//text: 'Color 7',
-			sortable: false,
 			dataIndex: 'color7',
+			sortable: false,
 			width: 50,
 			renderer: renderIcon
 		}
 	]
+	
+	
 });
 
 function renderIcon(color, metaData, record, row, column, store, gridView) {
@@ -84,7 +78,9 @@ function renderIcon(color, metaData, record, row, column, store, gridView) {
 		case "orange":
 			return '<img style="width:35px;height:35px" src="resources/images/orange.jpeg"/>';	
 		case "white":
-			return '<img style="width:35px;height:35px" src="resources/images/white.jpg"/>';	
+			return '<img style="width:35px;height:35px" src="resources/images/white.jpg"/>';
+		case "brown":
+			return '<img style="width:35px;height:35px" src="resources/images/brown.jpg"/>';	
 		default:
 			return '<img style="width:35px;height:35px" src="resources/images/blank.jpeg"/>';	
 	}

@@ -4,9 +4,9 @@ Ext.define('Bejeweled.view.score.List', {
 	id: "scorelist",
 	renderTo: Ext.getBody(),
 
-	title: 'Leadership Board',
+	title: 'Score Board',
+	width: 200,
 	//store: 'Scores',
-	maxWidth: 200,
 	
 	dockedItems: [{
 		xtype: 'toolbar',

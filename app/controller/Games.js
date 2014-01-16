@@ -12,12 +12,70 @@ Ext.define('Bejeweled.controller.Games', {
 			'boardgrid': {
 				select: this.itemSelected
 				//deselect: this.deselectCell
+			},
+			'gameboard button[action=start]': {
+				click: this.startGame
 			}
 		});
 	},
 
 	onPanelRendered: function() {
 		console.log('The game board panel was rendered');
+	},
+
+	startGame: function(button) {
+		console.log("clicked PLAY button");
+		// initialize the board
+		var grid = Ext.getCmp('id-boardgrid');
+		var tileStore = Ext.data.StoreManager.get("Tiles"); 
+		var gemStore = grid.getStore();
+		var nColors = tileStore.getCount(); 
+	
+		console.log(nColors + " " + gemStore);
+		
+		//gemStore.removeAll();
+		for (var i = 0; i < gemStore.getCount(); i++) {
+			for (var j = 0; j < gemStore.getCount(); j++) {
+				var r = Math.floor(Math.random() * nColors);
+				var columnToPull = 'color'+(j);
+				if (r >= 0 && r < nColors) {
+					var color = tileStore.getAt(r).data.color;
+					var record = grid.getStore().getAt(i);
+					if (record) {
+						record.set(columnToPull, color);
+						/*if (gemStore) {
+							gemStore.add(new Bejeweled.model.Selected({
+								color: color,
+								row: i,
+								column: j	
+							}));
+						}*/
+					}
+				}
+			}
+		}
+
+		/*for (var i=0; i < numberOfTiles; i++) {
+			// add random colored tiles
+			var r = Math.floor(Math.random() * nColors);
+			if (r >= 0 && r < nColors) {
+				var color = tileStore.getAt(r).data.color;
+				var record = grid.getStore().getAt(row-i);
+				if (record) {
+					record.set(columnToPull, color);
+					if (store) {
+						store.add(new Bejeweled.model.Selected({
+							color: color,
+							row: row-i,
+							column: column	
+						}));
+					}
+				}
+			}
+		}*/
+		grid.getStore().commitChanges();
+		gemStore.commitChanges();
+		grid.getStore().sync();
 	},
 
 	itemSelected: function(grid, record, row, column) {
@@ -464,7 +522,7 @@ Ext.define('Bejeweled.controller.Games', {
 	},
 
 	addTiles: function(grid, numberOfTiles, row, column) {
-		// red=0 blue=1 green=2 orange=3 white=4
+		// red=0 blue=1 green=2 orange=3 white=4 brown=5
 		var tileStore = Ext.data.StoreManager.get("Tiles"); 
 		var nColors = tileStore.getCount(); 
 		var columnToPull = 'color'+(column);
