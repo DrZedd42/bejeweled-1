@@ -16,12 +16,12 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 		},*/ 
 		{
 			columnWidth: 0.9,
-			style: 'margin:0 auto;margin-top:25px;margin-left:100px;',
+			style: 'margin:0 auto;margin-top:40px;margin-left:160px;',
 			border: false,
 			align: 'middle',
 			items : [
 				{
-          				html:'<img src="resources/images/header.png" height="70px width="500px">',
+          				html:'<img src="resources/images/header-2.png" height="100px width="800px">',
 					border: false
      				},
 				{
