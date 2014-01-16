@@ -55,8 +55,8 @@ Ext.define('Bejeweled.controller.Games', {
 				}
 			}
 		}
-		this.checkAffected(grid);
-		this.checkBoard(grid);
+		this.checkAffected();
+		this.checkBoard();
 		grid.getStore().commitChanges();
 		gemStore.commitChanges();
 		grid.getStore().sync();
@@ -537,7 +537,9 @@ Ext.define('Bejeweled.controller.Games', {
 		grid.getStore().sync();
 	},
 
-	checkAffected: function(grid) {
+	checkAffected: function() {
+		var grid = Ext.getCmp('id-boardgrid');
+		console.log("checkAffected");
 		var store = Ext.data.StoreManager.get("Affected");
 		var bonus = 15; // add 15 points for each extra matched tile
 				
@@ -590,12 +592,25 @@ Ext.define('Bejeweled.controller.Games', {
 		}	
 	},
 
-	checkBoard: function(grid) {
+	checkBoard: function() {
+		console.log("checkBoard");
+		var grid = Ext.getCmp('id-boardgrid');
 		var tiles = grid.store.data.items;
-		console.log(tiles);
+		var affected = Ext.data.StoreManager.get("Affected");
+		
+	
 		for (var i = 0; i < grid.store.getCount(); i++) {
 			for (var j=0; j < grid.store.getCount(); j++) {
-				
+				affected.removeAll();
+				var color = grid.store.getAt(i).data.color;
+				var record = grid.getStore().getAt(i);
+				affected.add(new Bejeweled.model.Selected({
+					color: color,
+					row: i,
+					column: j	
+				}));
+				affected.commitChanges();
+				this.checkAffected();
 			}
 		}
 	},
