@@ -31,9 +31,6 @@ Ext.define('Bejeweled.controller.Games', {
 		var gemStore = grid.getStore();
 		var nColors = tileStore.getCount(); 
 	
-		console.log(nColors + " " + gemStore);
-		
-		//gemStore.removeAll();
 		for (var i = 0; i < gemStore.getCount(); i++) {
 			for (var j = 0; j < gemStore.getCount(); j++) {
 				var r = Math.floor(Math.random() * nColors);
@@ -43,39 +40,16 @@ Ext.define('Bejeweled.controller.Games', {
 					var record = grid.getStore().getAt(i);
 					if (record) {
 						record.set(columnToPull, color);
-						/*if (gemStore) {
-							gemStore.add(new Bejeweled.model.Selected({
-								color: color,
-								row: i,
-								column: j	
-							}));
-						}*/
 					}
 				}
 			}
 		}
-
-		/*for (var i=0; i < numberOfTiles; i++) {
-			// add random colored tiles
-			var r = Math.floor(Math.random() * nColors);
-			if (r >= 0 && r < nColors) {
-				var color = tileStore.getAt(r).data.color;
-				var record = grid.getStore().getAt(row-i);
-				if (record) {
-					record.set(columnToPull, color);
-					if (store) {
-						store.add(new Bejeweled.model.Selected({
-							color: color,
-							row: row-i,
-							column: column	
-						}));
-					}
-				}
-			}
-		}*/
 		grid.getStore().commitChanges();
 		gemStore.commitChanges();
 		grid.getStore().sync();
+
+		var instructions = Ext.getCmp("instructions");
+		instructions.update('<p>Instructions: match at least 3 tiles of the same color<p>');
 	},
 
 	itemSelected: function(grid, record, row, column) {
@@ -478,8 +452,7 @@ Ext.define('Bejeweled.controller.Games', {
 	},
 
 	updateScore: function(scoreToAdd) {
-		var scoreGrid = Ext.getCmp("scorelist");
-		var score = scoreGrid.dockedItems.items[2].items.items[1];
+		var score = Ext.getCmp("score");
 		score.setText((parseInt(score.text) + scoreToAdd).toString());
 	},
 

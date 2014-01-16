@@ -1,7 +1,7 @@
 Ext.define('Bejeweled.view.board.Gameboard', {
 	extend: 'Ext.panel.Panel',
 	alias: 'widget.gameboard',
-	maxWidth: 500,
+	maxWidth: 800,
 	maxHeight: 600,
 	layout : 'column',
       	align: 'center',
@@ -15,11 +15,8 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 	
 		},*/ 
 		{
-			
-			//layout: 'fit',
-			
 			columnWidth: 0.9,
-			style: 'margin:0 auto;margin-top:25px;margin-left:35px;',
+			style: 'margin:0 auto;margin-top:25px;margin-left:100px;',
 			border: false,
 			align: 'middle',
 			items : [
@@ -27,6 +24,12 @@ Ext.define('Bejeweled.view.board.Gameboard', {
           				html:'<img src="resources/images/header.png" height="70px width="500px">',
 					border: false
      				},
+				{
+					html:'<p>Instructions: press PLAY to start the game. </p>',
+					width: 500,
+					border: false,
+					id: 'instructions'
+				},
 				{
 					xtype: 'boardgrid',
 				},
@@ -36,16 +39,37 @@ Ext.define('Bejeweled.view.board.Gameboard', {
 					height: 40,
 					width: 400,
 					items: [
-						{ xtype: 'tbfill' },
+						{
+							xtype: 'tbfill' 
+						},
+						{
+							scope: this,
+							name: 'scoreField',
+							text: 'Score: ',
+							id: 'scorefield'
+						},
+						{
+							name: 'score',
+							text: '0',
+							id: 'score'
+						},
+						{
+							xtype: 'tbfill' 
+						},
+						{
+							xtype: 'tbfill' 
+						},
 						{
 							xtype: 'button',
 							text: 'PLAY',
-							width: 80,
+							width: 60,
 							id: 'playButton',
 							action: 'start'
 							
 						},
-						{ xtype: 'tbfill' }
+						{ 
+							xtype: 'tbfill' 
+						}
 					]
 				}
 			
